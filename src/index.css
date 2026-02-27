@@ -2,47 +2,237 @@
 @tailwind components;
 @tailwind utilities;
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #0d0b08; color: #e8d4a0; min-height: 100vh; }
+/* ─── RESET & BASE ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-@layer utilities {
-  .title-glow { text-shadow: 3px 3px 0 #000, 0 0 40px rgba(212,168,39,0.25); }
-  .map-vignette {
-    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
-  }
-  .map-frame {
-    box-shadow:
-      0 0 0 2px #3a2a14,
-      0 0 0 5px #9a7818,
-      0 0 0 7px #3a2a14,
-      0 12px 50px rgba(0,0,0,0.8);
-  }
-  .modal-shadow {
-    box-shadow:
-      0 0 0 2px #9a7818,
-      0 0 0 4px #3a2a14,
-      0 14px 60px rgba(0,0,0,0.8);
-  }
-  .header-stripe {
-    background: repeating-linear-gradient(
-      -45deg, transparent 0px, transparent 18px,
-      rgba(180,50,50,0.04) 18px, rgba(180,50,50,0.04) 20px
-    );
-  }
+:root {
+  --gold: #c8971a;
+  --gold-hi: #e8b832;
+  --crim: #a02828;
+  --ink: #0c0a07;
+  --ink-2: #14100c;
+  --parch: #ddc98a;
+  --transition: 0.18s ease;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes diceRoll {
-  0%   { transform: rotate(0deg) scale(0.6); opacity: 0.4; }
-  15%  { opacity: 1; }
-  85%  { transform: rotate(700deg) scale(1.05); }
-  100% { transform: rotate(720deg) scale(1); }
+html, body {
+  height: 100%;
+  background: #060504;
+  color: var(--parch);
+  font-family: 'Crimson Text', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
 }
-@keyframes resultPop {
-  0%   { transform: scale(0.5); opacity: 0; }
-  60%  { transform: scale(1.15); }
-  100% { transform: scale(1); opacity: 1; }
+
+/* ─── GRAIN OVERLAY ─────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  mix-blend-mode: overlay;
 }
-.dice-rolling { animation: diceRoll 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-.result-pop   { animation: resultPop 0.5s ease-out forwards; }
-.spin         { animation: spin 1.2s linear infinite; }
+
+/* ─── MAP SURFACE ───────────────────────────────────────────────── */
+.map-surface {
+  background-color: #cdb87c;
+  background-image:
+    /* cross-hatch */
+    repeating-linear-gradient(0deg, rgba(90,60,20,0.055) 0px, rgba(90,60,20,0.055) 1px, transparent 1px, transparent 44px),
+    repeating-linear-gradient(90deg, rgba(90,60,20,0.055) 0px, rgba(90,60,20,0.055) 1px, transparent 1px, transparent 44px),
+    /* diagonal texture */
+    repeating-linear-gradient(45deg, rgba(90,60,20,0.025) 0px, rgba(90,60,20,0.025) 1px, transparent 1px, transparent 22px),
+    /* aged center glow */
+    radial-gradient(ellipse at 50% 45%, rgba(240,220,170,0.55) 0%, rgba(180,140,70,0.2) 55%, rgba(120,90,30,0.15) 100%);
+}
+
+/* ─── MAP FRAME ─────────────────────────────────────────────────── */
+.map-frame {
+  box-shadow:
+    inset 0 0 60px rgba(40,20,0,0.35),
+    0 0 0 3px #4a3010,
+    0 0 0 7px #8a6a18,
+    0 0 0 10px #3a2008,
+    0 0 50px rgba(0,0,0,0.85),
+    0 0 100px rgba(0,0,0,0.5);
+}
+
+/* ─── VIGNETTE ──────────────────────────────────────────────────── */
+.map-vignette {
+  background: radial-gradient(ellipse at 50% 48%, transparent 52%, rgba(30,14,0,0.5) 100%);
+  pointer-events: none;
+}
+
+/* ─── MODAL BASE ────────────────────────────────────────────────── */
+.modal-base {
+  background: linear-gradient(160deg, #f0e0b4 0%, #ddc98a 40%, #c8a860 100%);
+  box-shadow:
+    0 0 0 2px #8a6a18,
+    0 0 0 5px #3a2008,
+    0 0 0 7px #8a6a18,
+    0 0 80px rgba(0,0,0,0.9),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.modal-header {
+  background: linear-gradient(180deg, #0f0c08 0%, #16120d 100%);
+  border-bottom: 3px solid #8a6a18;
+}
+
+/* ─── SCROLLBAR ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #0c0a07; }
+::-webkit-scrollbar-thumb { background: #4a3010; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #8a6a18; }
+
+/* ─── TITLE GLOW ────────────────────────────────────────────────── */
+.title-glow {
+  text-shadow: 0 0 50px rgba(200,151,26,0.4), 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* ─── CHRONICLE ─────────────────────────────────────────────────── */
+.chronicle-panel {
+  background: linear-gradient(180deg, #0e0b07 0%, #130f09 100%);
+  border-left: 2px solid #2e2410;
+}
+
+.chronicle-item {
+  border-bottom: 1px solid rgba(74,48,16,0.4);
+  animation: chronicle 0.3s ease-out both;
+}
+
+/* ─── PLOT GLOW STATES ──────────────────────────────────────────── */
+.plot-claimed {
+  --glow-c: rgba(200,151,26,0.35);
+  animation: glow 2.8s ease-in-out infinite;
+}
+.plot-invaded {
+  --glow-c: rgba(168,40,40,0.45);
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* ─── STAT PILL ─────────────────────────────────────────────────── */
+.stat-pill {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(138,106,24,0.35);
+  backdrop-filter: blur(4px);
+}
+
+/* ─── BUTTON BASE ───────────────────────────────────────────────── */
+.btn {
+  cursor: pointer;
+  font-family: Cinzel, serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all var(--transition);
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-gold {
+  background: #c8971a;
+  color: #0c0a07;
+  border: 2px solid #8a6a18;
+}
+.btn-gold:hover:not(:disabled) { background: #e8b832; }
+
+.btn-crim {
+  background: #a02828;
+  color: #f0dfb4;
+  border: 2px solid #6a1818;
+}
+.btn-crim:hover:not(:disabled) { background: #c83232; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--parch);
+  border: 1px solid rgba(200,169,114,0.4);
+}
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-ghost-crim {
+  background: transparent;
+  color: #c83232;
+  border: 1px solid rgba(168,40,40,0.5);
+}
+.btn-ghost-crim:hover:not(:disabled) {
+  border-color: #c83232;
+  background: rgba(168,40,40,0.08);
+}
+
+/* ─── FORM ELEMENTS ─────────────────────────────────────────────── */
+.field-input {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  color: #0c0a07;
+  background: rgba(240,220,170,0.75);
+  border: 1.5px solid #c8a860;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color var(--transition), background var(--transition);
+}
+.field-input:focus {
+  border-color: #8a6a18;
+  background: rgba(240,225,180,0.9);
+}
+.field-input::placeholder { color: rgba(60,40,10,0.45); }
+
+.field-select {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  color: #0c0a07;
+  background: rgba(240,220,170,0.75);
+  border: 1.5px solid #c8a860;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.field-label {
+  font-family: Cinzel, serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a5030;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+/* ─── SECTION DIVIDER ───────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid rgba(168,136,80,0.5);
+  margin: 0.9rem 0;
+}
+
+/* ─── ANIMATIONS ────────────────────────────────────────────────── */
+@keyframes chronicle  { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes glow       { 0%,100% { box-shadow: 0 0 8px var(--glow-c,rgba(200,151,26,0.3)); } 50% { box-shadow: 0 0 24px var(--glow-c,rgba(200,151,26,0.65)); } }
+@keyframes emberDrift { 0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; } 12% { opacity: 0.9; } 88% { opacity: 0.25; } 100% { transform: translateY(-140px) translateX(var(--dx,0px)) scale(0.2); opacity: 0; } }
+@keyframes fadeUp     { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scalePop   { 0% { opacity: 0; transform: scale(0.87); } 70% { transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes diceRoll   { 0% { transform: rotate(0deg) scale(0.55); opacity: 0.3; } 18% { opacity: 1; } 100% { transform: rotate(720deg) scale(1); } }
+@keyframes resultPop  { 0% { transform: scale(0.45); opacity: 0; } 65% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes spin       { to { transform: rotate(360deg); } }
+@keyframes shake      { 0%,100% { transform: translate(0,0); } 20% { transform: translate(-5px,-2px); } 40% { transform: translate(5px,3px); } 60% { transform: translate(-4px,2px); } 80% { transform: translate(4px,-2px); } }
+@keyframes plotPulse  { 0%,100% { transform: scale(1); } 50% { transform: scale(1.015); } }
+@keyframes flagWave   { 0%,100% { transform: skewX(0deg); } 50% { transform: skewX(-3deg); } }
+
+.animate-fadeup     { animation: fadeUp 0.4s ease-out both; }
+.animate-scalepop   { animation: scalePop 0.38s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-diceroll   { animation: diceRoll 1.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+.animate-resultpop  { animation: resultPop 0.5s ease-out forwards; }
+.animate-spin       { animation: spin 1.1s linear infinite; }
+.animate-shake      { animation: shake 0.4s ease-in-out; }
+.animate-chronicle  { animation: chronicle 0.3s ease-out both; }
+.plot-pulse         { animation: plotPulse 3.5s ease-in-out infinite; }
+.flag-wave          { animation: flagWave 2.2s ease-in-out infinite; }

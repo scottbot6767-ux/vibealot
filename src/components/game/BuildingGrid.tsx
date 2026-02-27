@@ -1,26 +1,27 @@
 import { BUILDINGS } from '@/lib/gameTypes'
 
-interface Props {
-  selected: string | null
-  onSelect: (key: string) => void
-}
+interface Props { selected: string | null; onSelect: (key: string) => void }
 
 export const BuildingGrid = ({ selected, onSelect }: Props) => (
-  <div className="grid grid-cols-4 gap-1">
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
     {Object.entries(BUILDINGS).map(([key, bld]) => (
       <button
         key={key}
         onClick={() => onSelect(key)}
-        className="flex flex-col items-center justify-center p-1 rounded transition-all"
         style={{
-          aspectRatio: '1',
-          background: selected === key ? 'rgba(26,18,8,0.12)' : 'rgba(200,180,140,0.18)',
-          border: selected === key ? '2px solid #6b4a2a' : '2px solid #c4ae7a',
-          boxShadow: selected === key ? 'inset 0 0 0 1px #6b4a2a' : 'none',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '4px 2px', aspectRatio: '1', cursor: 'pointer',
+          background: selected === key ? 'rgba(30,20,8,0.2)' : 'rgba(200,180,140,0.18)',
+          border: selected === key ? '2px solid #8a6a18' : '1.5px solid rgba(168,136,80,0.5)',
+          borderRadius: 2,
+          boxShadow: selected === key ? 'inset 0 0 0 1px rgba(138,106,24,0.3)' : 'none',
+          transition: 'all 0.14s ease',
         }}
+        onMouseEnter={e => { if (key !== selected) e.currentTarget.style.borderColor = 'rgba(168,136,80,0.9)' }}
+        onMouseLeave={e => { if (key !== selected) e.currentTarget.style.borderColor = 'rgba(168,136,80,0.5)' }}
       >
-        <div style={{ width: 38, height: 30 }} dangerouslySetInnerHTML={{ __html: bld.svg }} />
-        <span className="font-heading text-ink" style={{ fontSize: 6.5, marginTop: 2 }}>{bld.name}</span>
+        <div style={{ width: 36, height: 28 }} dangerouslySetInnerHTML={{ __html: bld.svg }} />
+        <span style={{ fontSize: 6.5, fontFamily: 'Cinzel, serif', letterSpacing: '0.02em', color: '#4a3010', marginTop: 2 }}>{bld.name}</span>
       </button>
     ))}
   </div>
